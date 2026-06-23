@@ -1,0 +1,55 @@
+name: Update formula on Qx release
+
+on:
+  repository_dispatch:
+    types: [qx-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Qx version to update to"
+        required: true
+      sha256_arm:
+        description: "SHA256 of the ARM64 .app.zip"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version and SHA
+        id: vars
+        run: |
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+            echo "sha256_arm=${{ github.event.client_payload.sha256_arm }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "sha256_arm=${{ inputs.sha256_arm }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update formula
+        run: |
+          VERSION="${{ steps.vars.outputs.version }}"
+          SHA256_ARM="${{ steps.vars.outputs.sha256_arm }}"
+          FILE="Casks/qx.rb"
+
+          # Update version line
+          sed -i "s/version \".*\"/version \"$VERSION\"/" "$FILE"
+
+          # Update sha256 for arm
+          sed -i "s/sha256 arm: \".*\"/sha256 arm: \"$SHA256_ARM\"/" "$FILE"
+
+      - name: Commit and push
+        run: |
+          git config user.name "Qx Bot"
+          git config user.email "bot@mcxen.github.com"
+          git add -A
+          VERSION="${{ steps.vars.outputs.version }}"
+          git commit -m "Update Qx to v${VERSION}"
+          git push
