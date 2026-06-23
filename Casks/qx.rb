@@ -13,10 +13,15 @@ cask "qx" do
     strategy :github_latest
   end
 
-  auto_updates true
   depends_on macos: :sonoma
 
-  app "qx.app", target: "Qx.app"
+  app "Qx.app"
+
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Qx.app"],
+                   sudo: false
+  end
 
   uninstall quit: "com.mcx.qx",
             delete: "/Applications/Qx.app"
