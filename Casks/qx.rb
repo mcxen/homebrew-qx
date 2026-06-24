@@ -23,8 +23,7 @@ cask "qx" do
                    sudo: false
   end
 
-  uninstall quit: "com.mcx.qx",
-            delete: "/Applications/Qx.app"
+  uninstall quit: "com.mcx.qx"
 
   zap trash: [
     "~/Library/Application Support/qx",
