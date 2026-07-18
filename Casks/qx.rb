@@ -1,6 +1,6 @@
 cask "qx" do
-  version "0.5.40"
-  sha256 arm: "7ee4254e3c1d760adef29778ef1681398fa40fa7b6c5afad649987bdef9ee5e5"
+  version "0.5.41"
+  sha256 arm: "95291f1d46fdf7ee349c70cb266a885744c1aeff45ba0cc341c45dc7e5491637"
 
   url "https://github.com/mcxen/qx/releases/download/v#{version}/qx_v#{version}_aarch64-apple-darwin.app.zip"
   name "Qx"
